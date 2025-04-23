@@ -8,7 +8,7 @@ TRIG = 23
 ECHO = 24
 
 def setup_sensor():
-    GPIO.setmode(GPIO.BOARD)
+    GPIO.setmode(GPIO.BCM)
     GPIO.setup(TRIG, GPIO.OUT)
     GPIO.setup(ECHO, GPIO.IN)
 
