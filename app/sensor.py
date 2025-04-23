@@ -1,9 +1,11 @@
 #code to run the sensor
+from gpiozero import DistanceSensor
+from time import sleep
 import RPi.GPIO as GPIO
 import time
 
-TRIG = 16
-ECHO = 18
+TRIG = 23
+ECHO = 24
 
 def setup_sensor():
     GPIO.setmode(GPIO.BOARD)
