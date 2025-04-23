@@ -1,22 +1,17 @@
 #Entry point to run main loop 
-import time
-import RPi.GPIO as GPIO
-from sensor import setup_sensor, get_distance
+from time import sleep
+from sensor import UltrasonicSensor
 
 def main():
+    sensor = UltrasonicSensor()
+
     try:
-        setup_sensor()
-        print("Ultrasonic sensor is running...")
-
         while True:
-            distance = get_distance()
+            distance = sensor.get_distance_cm()
             print(f"Distance: {distance:.2f} cm")
-            time.sleep(0.3)
-
+            sleep(0.3)
     except KeyboardInterrupt:
-        print("Stopping sensor...")
-    finally:
-        GPIO.cleanup()
+        print("Exiting...")
 
 if __name__ == "__main__":
     main()
