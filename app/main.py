@@ -7,20 +7,23 @@ from alert import AlertSystem
 
 def main():
     sensor = UltrasonicSensor()
-    camera = CameraDisplay()
-    alert_system = AlertSystem()
+    camera = CameraDisplay()  # no alert system passed here
+    alert_system = AlertSystem()  # alert system is separate
+
+    camera.start()  # Start the camera
 
     try:
         while True:
-            distance = sensor.get_distance_cm()
-            camera.update_overlay(distance)
-            camera.show()
-            print(f"Distance: {distance:.2f} cm")
-            alert_system.play_alert(distance)
+            distance = sensor.get_distance_cm()  # Get distance from sensor
+            camera.update_overlay(distance)  # Update camera overlay
+            camera.show()  # Show the camera feed
+
+            print(f"Distance: {distance:.2f} cm")  # Print to terminal
+            alert_system.play_alert(distance)  # Play an alert based on distance
             sleep(0.3)
     except KeyboardInterrupt:
         print("Exiting...")
-        camera.cleanup()
+        camera.cleanup()  # Clean up camera resources
 
 if __name__ == "__main__":
     main()
