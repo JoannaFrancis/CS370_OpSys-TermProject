@@ -1,1 +1,3 @@
-RPi.GPIO
+gpiozero
+opencv-python
+pygame
