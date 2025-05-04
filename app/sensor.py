@@ -1,5 +1,5 @@
 #code to run the sensor
-#test
+
 from gpiozero import DistanceSensor
 from time import sleep
 

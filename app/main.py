@@ -1,29 +1,37 @@
 #Entry point to run main loop 
-#test
-from time import sleep
+import threading
+import time
 from sensor import UltrasonicSensor
-from cam import CameraDisplay
-from alert import AlertSystem 
+from sensor_thread import SensorThread
+from cam_thread  import CameraThread
+from alert_thread import AlertThread
 
+class SharedState:
+    def __init__(self):
+        self.distance = 100.0 #Dummy Value needed to avoid attributeError on start up 
+        self.lock = threading.Lock()
 def main():
-    sensor = UltrasonicSensor()
-    camera = CameraDisplay()  # no alert system passed here
-    alert_system = AlertSystem()  # alert system is separate
+    shared_state = SharedState()
 
-    camera.start()  # Start the camera
+    sensor_thread = SensorThread(shared_state)
+    camera_thread = CameraThread(shared_state)
+    alert_thread = AlertThread(shared_state)
+
+    sensor_thread.start()
+    camera_thread.start()
+    alert_thread.start()
 
     try:
         while True:
-            distance = sensor.get_distance_cm()  # Get distance from sensor
-            camera.update_overlay(distance)  # Update camera overlay
-            camera.show()  # Show the camera feed
-
-            print(f"Distance: {distance:.2f} cm")  # Print to terminal
-            alert_system.play_alert(distance)  # Play an alert based on distance
-            sleep(0.3)
+            time.sleep(1)
     except KeyboardInterrupt:
-        print("Exiting...")
-        camera.cleanup()  # Clean up camera resources
-
+        print("\nShutting down threads...")
+        sensor_thread.running = False
+        camera_thread.running = False
+        alert_thread.running = False
+        sensor_thread.join()
+        camera_thread.join()
+        alert_thread.join()
+        print("Exited cleanly.")
 if __name__ == "__main__":
     main()
