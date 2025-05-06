@@ -16,11 +16,17 @@ class AlertThread(threading.Thread):
         while True:
             distance = self.shared_data.distance  # default to 100cm
             if distance <= 10:
-                self.buzzer.beep(0.2, 0.2, None, False)
+                self.buzzer.on()
+                sleep(0.05)
+                self.buzzer.off()
             elif distance <= 20:
-                self.buzzer.beep(0.2, 0.1, None, False)
+                self.buzzer.on()
+                sleep(0.1)
+                self.buzzer.off()
             elif distance <= 50:
-                self.buzzer.beep(0.1, 0.05, None, False)       
+                self.buzzer.on()
+                sleep(0.2)
+                self.buzzer.off()    
             else:
                 self.buzzer.off()
                 sleep(0.2)
