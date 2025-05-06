@@ -32,39 +32,20 @@ class CameraThread(threading.Thread):
 
             # Draw a red bounding box if distance is within a certain range (e.g., 20 cm)
             if distance <= 20.0:
-               # Convert to greyscale to reduce image noise
-                gray = cv2.cvtColor(frame_resized, cv2.COLOR_BGR2GRAY)
+                 fg_mask = self.bg_subtractor.apply(frame_resized)
+                 contours, _ = cv2.findContours(fg_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                  
+                 for contour in contours:
+                     if cv2.contourArea(contour) >800:
+                         x,y,w,h = cv2.boundingRect(contour)
+                         cv2.rectangle(frame_resized, (x, y), (x + w , y + h), (0, 0, 255), 2)
+                         
+            # Display the updated frame
+            cv2.imshow("Camera Feed", frame_resized)
 
-                # Apply Gaussian blur to reduce high-frequency noise/reflections
-                blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-
-                #Seperate foreground from background in variable light
-                thresh = cv2.adaptiveThreshold(
-                    blurred,                
-                    255,                    
-                    cv2.ADAPTIVE_THRESH_GAUSSIAN_C,  # Gaussian weight of neighborhood
-                    cv2.THRESH_BINARY_INV,  # Invert the output (objects = white, background = black)
-                    11,                     # Block size 
-                    2                       # Tunes sensitivity
-                )
-
-                # Find external contours from the binary image (white objects on black background)
-                contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-                # Loop through each contour found
-                for contour in contours:
-                    area = cv2.contourArea(contour)  # Calculate the contour area in pixels
-
-                    # Filter out too-small or too-large contours to eliminate noise and large reflections
-                    if 800 < area < 5000:  # ajust lower bounds to filter small reflections or upper bound to exclude large background regions
-                        x, y, w, h = cv2.boundingRect(contour)  # Get the bounding box coordinates
-                        cv2.rectangle(frame_resized, (x, y), (x + w, y + h), (0, 0, 255), 2)  # Draw red rectangle
-                 # Display the updated frame
-                cv2.imshow("Camera Feed", frame_resized)
-
-                # Break the loop if 'q' is pressed
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
+            # Break the loop if 'q' is pressed
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
 
     def cleanup(self):
         # Stop the camera and close OpenCV windows
