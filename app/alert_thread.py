@@ -5,7 +5,7 @@ from gpiozero import Buzzer
 from time import sleep
 
 class AlertThread(threading.Thread):
-    def __init__(self, shared_data, buzzer_pin=18):
+    def __init__(self, shared_data, buzzer_pin=17):
         super().__init__()
         self.buzzer = Buzzer(buzzer_pin)
         self.shared_data = shared_data
