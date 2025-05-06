@@ -13,7 +13,8 @@ class AlertThread(threading.Thread):
 
     def run(self):
         while True:
-            distance = self.shared_data.get('distance', 100)  # default to 100cm
+            distance = self.shared_data.distance
+              # default to 100cm
             if distance <= 10:
                 self.buzzer.on()
                 sleep(0.05)
